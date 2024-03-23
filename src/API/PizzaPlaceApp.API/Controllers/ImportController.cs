@@ -1,4 +1,7 @@
+using PizzaPlaceApp.Application.Features.Import.Commands.ImportOrders;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using PizzaPlaceApp.Application.Features.Import.Commands.ImportOrderDetails;
 
 namespace PizzaPlaceApp.API.Controllers
 {
@@ -6,36 +9,49 @@ namespace PizzaPlaceApp.API.Controllers
     [Route("api/[controller]")]
     public class ImportController : ControllerBase
     {
-        // GET: api/import
-        [HttpGet]
-        public IActionResult Get()
+        private readonly IMediator _mediator;
+
+        public ImportController(IMediator mediator)
         {
-            // TODO: Implement your logic here
-            return Ok("GET request received");
+            _mediator = mediator;
         }
 
-        // POST: api/import
-        [HttpPost]
-        public IActionResult Post()
+        [HttpPost("Orders")]
+        public async Task<ActionResult> ImportOrdersCsv(IFormFile file)
         {
-            // TODO: Implement your logic here
-            return Ok("POST request received");
+            if (file == null || file.Length == 0)
+            {
+                return BadRequest("No file uploaded.");
+            }
+
+            // Check if the file is a CSV file
+            if (Path.GetExtension(file.FileName).ToLower() != ".csv")
+            {
+                return BadRequest("Invalid file format. Only CSV files are allowed.");
+            }
+
+            var response = await _mediator.Send(new ImportOrdersCommand { Data = file.OpenReadStream() });
+
+            return Ok("CSV file uploaded and processed successfully.");
         }
 
-        // PUT: api/import/{id}
-        [HttpPut("{id}")]
-        public IActionResult Put(int id)
+        [HttpPost("OrderDetails")]
+        public async Task<ActionResult> ImportOrderDetailsCsv(IFormFile file)
         {
-            // TODO: Implement your logic here
-            return Ok($"PUT request received for id: {id}");
-        }
+            if (file == null || file.Length == 0)
+            {
+                return BadRequest("No file uploaded.");
+            }
 
-        // DELETE: api/import/{id}
-        [HttpDelete("{id}")]
-        public IActionResult Delete(int id)
-        {
-            // TODO: Implement your logic here
-            return Ok($"DELETE request received for id: {id}");
+            // Check if the file is a CSV file
+            if (Path.GetExtension(file.FileName).ToLower() != ".csv")
+            {
+                return BadRequest("Invalid file format. Only CSV files are allowed.");
+            }
+
+            var response = await _mediator.Send(new ImportOrderDetailsCommand { Data = file.OpenReadStream() });
+
+            return Ok("CSV file uploaded and processed successfully.");
         }
     }
 }

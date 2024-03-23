@@ -39,6 +39,9 @@ namespace PizzaPlaceApp.Persistence.Migrations
                     b.Property<DateTime?>("DateModified")
                         .HasColumnType("datetime2");
 
+                    b.Property<int>("OrderId")
+                        .HasColumnType("int");
+
                     b.Property<TimeOnly>("Time")
                         .HasColumnType("time");
 
@@ -61,11 +64,15 @@ namespace PizzaPlaceApp.Persistence.Migrations
                     b.Property<DateTime?>("DateModified")
                         .HasColumnType("datetime2");
 
+                    b.Property<int>("OrderDetailId")
+                        .HasColumnType("int");
+
                     b.Property<int>("OrderId")
                         .HasColumnType("int");
 
-                    b.Property<int>("PizzaId")
-                        .HasColumnType("int");
+                    b.Property<string>("PizzaId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("Quantity")
                         .HasColumnType("int");
@@ -73,8 +80,6 @@ namespace PizzaPlaceApp.Persistence.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("OrderId");
-
-                    b.HasIndex("PizzaId");
 
                     b.ToTable("OrderDetails");
                 });
@@ -150,21 +155,11 @@ namespace PizzaPlaceApp.Persistence.Migrations
 
             modelBuilder.Entity("PizzaPlaceApp.Domain.OrderDetail", b =>
                 {
-                    b.HasOne("PizzaPlaceApp.Domain.Order", "Order")
+                    b.HasOne("PizzaPlaceApp.Domain.Order", null)
                         .WithMany("OrderDetails")
                         .HasForeignKey("OrderId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.HasOne("PizzaPlaceApp.Domain.Pizza", "Pizza")
-                        .WithMany()
-                        .HasForeignKey("PizzaId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Order");
-
-                    b.Navigation("Pizza");
                 });
 
             modelBuilder.Entity("PizzaPlaceApp.Domain.Order", b =>

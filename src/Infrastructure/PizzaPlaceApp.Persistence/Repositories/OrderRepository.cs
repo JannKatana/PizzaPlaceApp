@@ -21,7 +21,6 @@ public class OrderRepository : GenericRepository<Order>, IOrderRepository
     public async Task<List<Order>> GetOrdersWithDetails()
     {
         return await Context.Orders
-            .Include(q => q.OrderDetails)
             .ToListAsync();
     }
 }

@@ -5,12 +5,12 @@ using MediatR;
 
 namespace PizzaPlaceApp.Application.Features.Order.Queries.GetOrders;
 
-public class GetOrderQueryHandler : IRequestHandler<GetOrdersQuery,List<OrderDto>>
+public class GetOrdersQueryHandler : IRequestHandler<GetOrdersQuery,List<OrderDto>>
 {
     private readonly IOrderRepository _orderRepository;
     private readonly IMapper _mapper;
 
-    public GetOrderQueryHandler(IOrderRepository orderRepository, IMapper mapper)
+    public GetOrdersQueryHandler(IMapper mapper, IOrderRepository orderRepository)
     {
         _orderRepository = orderRepository;
         _mapper = mapper;
@@ -18,8 +18,8 @@ public class GetOrderQueryHandler : IRequestHandler<GetOrdersQuery,List<OrderDto
     
     public async Task<List<OrderDto>> Handle(GetOrdersQuery request, CancellationToken cancellationToken)
     {
-        var Order = await _orderRepository.GetOrdersWithDetails();
+        var orders = await _orderRepository.GetAllAsync();
 
-        return _mapper.Map<List<OrderDto>>(Order);
+        return _mapper.Map<List<OrderDto>>(orders);
     }
 }

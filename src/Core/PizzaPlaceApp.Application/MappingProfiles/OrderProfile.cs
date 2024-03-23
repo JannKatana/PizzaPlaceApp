@@ -1,15 +1,17 @@
 using AutoMapper;
-
+using PizzaPlaceApp.Application.Features.Import.Commands.ImportOrders;
 using PizzaPlaceApp.Application.Features.Order.Queries.GetOrders;
 using PizzaPlaceApp.Domain;
 
 namespace PizzaPlaceApp.Application.MappingProfiles;
 
-public class LeaveTypeProfile : Profile
+public class OrderProfile : Profile
 {
-    public LeaveTypeProfile()
+    public OrderProfile()
     {
         CreateMap<OrderDto, Order>().ReverseMap();
-        // CreateMap<OrderDetailDto, OrderDetail>();
+        CreateMap<Order, ImportOrdersDto>()
+            .ForMember(dto => dto.order_id, opt => opt.MapFrom(order => order.OrderId))
+            .ReverseMap();
     }
 }
