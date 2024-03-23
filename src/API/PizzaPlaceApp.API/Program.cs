@@ -1,7 +1,22 @@
+using PizzaPlaceApp.Application;
+using PizzaPlaceApp.Infrastructure;
+using PizzaPlaceApp.Persistence;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+builder.Services.AddApplicationServices();
+builder.Services.AddInfrastructureServices(builder.Configuration);
+builder.Services.AddPersistenceServices(builder.Configuration);
+
 builder.Services.AddControllers();
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("all", corsPolicyBuilder => corsPolicyBuilder.AllowAnyOrigin()
+        .AllowAnyHeader()
+        .AllowAnyMethod());
+});
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -17,5 +32,11 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.UseCors("all");
+
+app.UseAuthorization();
+
+app.MapControllers();
 
 app.Run();
